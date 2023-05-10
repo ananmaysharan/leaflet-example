@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Leaflet Toronto</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="map" style="width: 100%; height: 100%;"></div>
+    <script>
+
+        const map = L.map('map').setView([43.65, -79.39], 14);
+
+        const tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+
+        var mystyle = { "color": 'green' }
+
+        fetch("green_spaces.geojson").then(function (response) {
+            return response.json();
+        })
+            .then(function (data) {
+                L.geoJSON(data, {style: mystyle, onEachFeature: function (feature, layer) {layer.bindPopup(feature.properties.AREA_NAME);}}).addTo(map);
+            });
+
+
+
+        const marker = L.marker([43.65, -79.39]).addTo(map)
+            .bindPopup('<b>Hello there!</b><br />I am a popup in Toronto on Queen Street West.');
+
+        // const circle = L.circle([51.508, -0.11], {
+        // 	color: 'red',
+        // 	fillColor: '#f03',
+        // 	fillOpacity: 0.5,
+        // 	radius: 500
+        // }).addTo(map).bindPopup('I am a circle.');
+
+        // const polygon = L.polygon([
+        // 	[51.509, -0.08],
+        // 	[51.503, -0.06],
+        // 	[51.51, -0.047]
+        // ]).addTo(map).bindPopup('I am a polygon.');
+
+
+        // const popup = L.popup()
+        // 	.setLatLng([51.513, -0.09])
+        // 	.setContent('I am a standalone popup.')
+        // 	.openOn(map);
+
+        function onMapClick(e) {
+            popup
+                .setLatLng(e.latlng)
+                .setContent(`You clicked the map at ${e.latlng.toString()}`)
+                .openOn(map);
+        }
+
+        map.on('click', onMapClick);
+
+    </script>
+
+
+
+</body>
+
+</html>
